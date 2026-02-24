@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Raj Sweet Mart</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <style>
+        .page-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 12px
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12)
+        }
+
+        .menu-header {
+            padding: 12px 0 0
+        }
+
+        .menu-header h1 {
+            font-weight: 700
+        }
+
+        #cartContainer {
+            width: 100%
+        }
+
+        .cart-row {
+            gap: 10px
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .form-row label {
+            font-weight: 600
+        }
+
+        .form-row input,
+        .form-row textarea {
+            padding: 10px 12px;
+            border: 1px solid #e4e4e4;
+            border-radius: 10px;
+            outline: none;
+            background: #fff
+        }
+
+        .form-row input:focus,
+        .form-row textarea:focus {
+            border-color: #FDB813
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #FDB813, #fbbf24);
+            color: #000;
+            border: none
+        }
+
+        .nav-button {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            color: #333
+        }
+
+        .nav-button:hover {
+            transform: translateY(-1px)
+        }
+
+        #payAmount {
+            color: #111
+        }
+
+        #paytmQR {
+            border: 1px solid #eee
+        }
+
+        #checkoutMessage {
+            font-size: 14px
+        }
+
+        @media (max-width:720px) {
+            .checkout-card h2 {
+                font-size: 18px;
+            }
+            .cart-header {
+                font-size: 14px;
+            }
+            .cart-row {
+                font-size: 14px;
+            }
+            .cart-row .nav-button {
+                width: 28px;
+                height: 28px;
+            }
+            .cart-header,
+            .cart-row {
+                grid-template-columns: 1.6fr 0.9fr 1fr 0.9fr 90px;
+                min-width: 520px;
+            }
+        }
+
+        body {
+            font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: radial-gradient(1200px 800px at 15% 10%, #fff7e6 0%, #ffeecc 35%, #fff4db 55%, #fff 80%) no-repeat fixed;
+            animation: fadeInBody .6s ease both;
+        }
+
+        @keyframes fadeInBody {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .checkout-page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .checkout-card {
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.62));
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 184, 28, 0.18);
+            box-shadow: 0 18px 50px rgba(245, 158, 66, 0.12), 0 6px 20px rgba(0, 0, 0, 0.06);
+            padding: 20px;
+            transform: translateZ(0);
+            animation: fadeUp .5s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .checkout-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2b2b2b;
+            margin-bottom: 12px;
+        }
+
+        .menu-header {
+            text-align: center;
+            padding: 20px 0 6px;
+        }
+
+        .menu-header h1 {
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            color: #1b1b1b;
+        }
+
+        .menu-header p {
+            margin-top: 4px;
+            color: #6b6b6b;
+            font-weight: 500;
+        }
+
+        .cart-table {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .cart-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 120px;
+            gap: 10px;
+            padding: 8px 0;
+            font-weight: 700;
+            color: #444;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            min-width: 560px;
+        }
+
+        .cart-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 120px;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            min-width: 560px;
+        }
+
+        .cart-row:last-child {
+            border-bottom: none;
+        }
+
+        .col-price,
+        .col-total {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .col-qty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .col-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .cart-row .nav-button {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            color: #333;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+        }
+
+        .cart-row .nav-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+            background: #fff7ec;
+        }
+
+        .cart-row .nav-button[data-action="remove"] {
+            padding: 8px 14px;
+            width: auto;
+            height: 36px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.28);
+        }
+
+        .cart-row .nav-button[data-action="remove"]:hover {
+            transform: translateY(-1px);
+            background: #dc2626;
+        }
+
+        .cart-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        #clearCartBtn {
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: none;
+            color: #ff0000;
+            transition: transform .15s ease, box-shadow .15s ease, 
+        }
+
+        #clearCartBtn:hover {
+            transform: translateY(-1px);
+        }
+
+        .cart-total {
+            font-size: 22px;
+            font-weight: 800;
+            color: #111;
+            background: linear-gradient(90deg, #fff7e6, #fff);
+            padding: 8px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 184, 28, 0.22);
+        }
+
+        .qr-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
+
+        .amount-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1b1b1b;
+        }
+
+        .amount-title .amt {
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #fff8ea, #fff);
+            border: 1px solid rgba(255, 184, 28, 0.25);
+        }
+
+        #paytmQR {
+            width: 280px;
+            height: 280px;
+            object-fit: contain;
+            border-radius: 16px;
+            border: 2px solid #d4a017;
+            box-shadow: 0 12px 30px rgba(212, 160, 23, 0.28), 0 6px 16px rgba(0, 0, 0, 0.08);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        #paytmQR:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 38px rgba(212, 160, 23, 0.33), 0 8px 22px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-hint {
+            color: #6b6b6b;
+            font-size: 12px;
+        }
+
+        .float-field {
+            position: relative;
+            display: block;
+        }
+
+        .float-field input,
+        .float-field textarea {
+            width: 100%;
+            padding: 14px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 14px;
+            background: #fff;
+            color: #111;
+            outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease, transform .1s ease;
+        }
+
+        .float-field textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .float-field label {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+            padding: 0 6px;
+            background: #fff;
+            color: #6b6b6b;
+            pointer-events: none;
+            transition: all .15s ease;
+        }
+
+        .float-field input:focus,
+        .float-field textarea:focus {
+            border-color: #f59e42;
+            box-shadow: 0 0 0 4px rgba(245, 158, 66, 0.18);
+        }
+
+        .float-field input:not(:placeholder-shown)+label,
+        .float-field textarea:not(:placeholder-shown)+label,
+        .float-field input:focus+label,
+        .float-field textarea:focus+label {
+            top: -8px;
+            transform: none;
+            font-size: 12px;
+            color: #a16207;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 22px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            background: linear-gradient(90deg, #ff8c2b, #ffb703, #ffd369);
+            color: #1b1b1b;
+            box-shadow: 0 14px 30px rgba(255, 159, 28, 0.28), 0 6px 16px rgba(0, 0, 0, 0.08);
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+            box-shadow: 0 8px 18px rgba(255, 159, 28, 0.22);
+        }
+
+        #checkoutMessage {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 880px) {
+            .checkout-card {
+                padding: 16px;
+                border-radius: 20px;
+            }
+
+            #paytmQR {
+                width: 240px;
+                height: 240px;
+            }
+
+            .cart-total {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .amount-title {
+                font-size: 20px;
+            }
+        }
+
+        /* Dark theme refinements for Order page */
+        body.dark-theme .checkout-card {
+            background: linear-gradient(to bottom right, rgba(20, 20, 22, 0.88), rgba(24, 24, 28, 0.86));
+            border-color: rgba(255, 184, 28, 0.22);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 184, 28, 0.06);
+        }
+
+        body.dark-theme .cart-row {
+            border-bottom-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body.dark-theme .cart-row .nav-button {
+            background: #232428;
+            color: #eaeaea;
+            border-color: #2d2f35;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        body.dark-theme .cart-row .nav-button:hover {
+            background: #2a2c33;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-theme .cart-row .nav-button[data-action="remove"] {
+            background: #ef4444;
+            box-shadow: 0 10px 22px rgba(239, 68, 68, 0.35);
+        }
+
+        body.dark-theme .cart-header {
+            border-bottom-color: rgba(255, 255, 255, 0.06);
+            color: #eaeaea;
+        }
+
+        body.dark-theme .cart-total {
+            color: #f5f5f5;
+            background: linear-gradient(90deg, #1f1f24, #1a1b1f);
+            border-color: rgba(255, 184, 28, 0.28);
+            box-shadow: 0 0 18px rgba(255, 184, 28, 0.08) inset;
+        }
+
+        body.dark-theme .amount-title {
+            color: #f5f5f5;
+        }
+
+        body.dark-theme .amount-title .amt {
+            background: linear-gradient(180deg, #1f1f23, #191b1e);
+            color: #ffd36b;
+            border-color: rgba(255, 184, 28, 0.32);
+        }
+
+        body.dark-theme #paytmQR {
+            border-color: #c29210;
+            box-shadow: 0 16px 36px rgba(194, 146, 16, 0.32), 0 8px 22px rgba(0, 0, 0, 0.55);
+        }
+
+        body.dark-theme #paytmQR:hover {
+            box-shadow: 0 22px 44px rgba(194, 146, 16, 0.38), 0 10px 26px rgba(0, 0, 0, 0.6);
+        }
+
+        body.dark-theme .float-field input,
+        body.dark-theme .float-field textarea {
+            background: #1d1f24;
+            color: #e9e9e9;
+            border-color: #2b2e36;
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02) inset;
+        }
+
+        body.dark-theme .float-field label {
+            background: #1d1f24;
+            color: #bdbdbd;
+        }
+
+        body.dark-theme .float-field input:focus,
+        body.dark-theme .float-field textarea:focus {
+            border-color: #f59e42;
+            box-shadow: 0 0 0 4px rgba(245, 158, 66, 0.22), 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+    </style>
+</head>
+
+<body class="background-image">
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">RAJ SWEET MART</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-button">Home</a>
+                <a href="menu.html" class="nav-button">Menu</a>
+                <a href="diwali.html" class="nav-button">Diwali-Special</a>
+                <a href="contact.html" class="nav-button">Contact</a>
+                <a href="order.html" class="nav-button">Order Now</a>
+            </div>
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span id="menu-icon">☰</span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobile-nav">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="menu.html" class="mobile-nav-link">Menu</a>
+            <a href="diwali.html" class="mobile-nav-link">Diwali Special</a>
+            <a href="contact.html" class="mobile-nav-link">Contact</a>
+            <a href="order.html" class="mobile-nav-link">Order Now</a>
+        </div>
+        <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+    </nav>
+
+    <main class="main-content checkout-page">
+        <header class="menu-header">
+            <div class="menu-header-content">
+                <h1>Checkout</h1><br><br>
+                <p>Review your cart, pay via Paytm QR, and submit your order.</p>
+            </div><br><br>
+        </header>
+
+        <section class="card checkout-card"><br>
+            <h2>Cart Items</h2><br>
+            <div class="cart-table">
+                <div class="cart-header">
+                    <div class="col-item">Item</div>
+                    <div class="col-price">Price</div>
+                    <div class="col-qty">Quantity</div>
+                    <div class="col-total">Total</div>
+                    <div class="col-actions"></div>
+                </div>
+                <div id="cartContainer"></div>
+            </div>
+            <div class="cart-footer">
+                <button id="clearCartBtn" class="nav-button">Clear Cart</button>
+                <div class="cart-total">Total: ₹ <span id="cartTotal">0</span></div>
+            </div>
+        </section><br><br>
+
+        <section class="card checkout-card"><br>
+            <h2>Pay via Paytm</h2><br><br>
+            <div class="qr-card">
+                <div class="amount-title">Amount to Pay: ₹ <span id="payAmount" class="amt">0</span></div><br>
+                <img id="paytmQR" src="logo/qrr.png" alt="Paytm QR" />
+                <div class="qr-hint"></div>
+            </div>
+            <div class="float-field" style="margin-top: 8px;">
+                <input id="txnId" type="text" placeholder=" " autocomplete="off">
+                <label for="txnId">UPI Transaction ID</label>
+            </div><br>
+            <div class="float-field" style="margin-top: 10px;">
+                <input id="paymentScreenshot" type="file" accept="image/*" placeholder=" ">
+                <label for="paymentScreenshot">Upload payment screenshot (optional)</label>
+            </div>
+            <div id="screenshotPreview" style="margin-top: 10px;"></div>
+        </section><br><br>
+
+        <section class="card checkout-card"><br>
+            <h2>Customer Details</h2><br>
+            <div class="float-field">
+                <input id="customerName" type="text" placeholder=" " autocomplete="name">
+                <label for="customerName">Name</label>
+            </div>
+            <div class="float-field" style="margin-top: 10px;">
+                <input id="customerPhone" type="tel" placeholder=" " autocomplete="tel">
+                <label for="customerPhone">Phone</label>
+            </div>
+            <div class="float-field" style="margin-top: 10px;">
+                <textarea id="customerAddress" rows="3" placeholder=" "></textarea>
+                <label for="customerAddress">Address</label>
+            </div>
+            <div style="margin-top: 14px;">
+                <button id="submitOrderBtn" class="cta-button">Submit Order</button>
+            </div>
+            <div id="checkoutMessage"></div>
+        </section>
+    </main>
+
+    <script src="/js/script.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/checkout.js"></script>
+</body>
+
+</html>
