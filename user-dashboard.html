@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Raj Sweet Mart</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* reuse admin page styles for cards/layout */
+        .admin-page {
+            background: #f3f4f6;
+        }
+
+        .admin-layout {
+            max-width: 1200px;
+            margin: 16px auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 16px;
+        }
+
+        .main-pane {
+            min-width: 0;
+        }
+
+        .topbar {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            position: static;
+            top: auto;
+            z-index: 5;
+        }
+
+        .orders-section {
+            margin-top: 16px;
+        }
+
+        .orders-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .orders-header input,
+        .orders-header button {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #fff;
+            outline: none;
+        }
+
+        .orders-header button {
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .orders-header button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 12px;
+        }
+
+        .order-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            padding: 16px;
+            transition: transform .15s ease, box-shadow .15s ease;
+            overflow: hidden;
+        }
+
+        .order-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 12px;
+            border: 1px solid transparent;
+        }
+
+        .badge-id {
+            background: #eef2ff;
+            color: #1e3a8a;
+            border-color: #c7d2fe;
+        }
+
+        .badge-pending {
+            background: #fef9c3;
+            color: #854d0e;
+            border-color: #fde68a;
+        }
+
+        .badge-verified {
+            background: #e0f2fe;
+            color: #075985;
+            border-color: #bae6fd;
+        }
+
+        .badge-delivered {
+            background: #dcfce7;
+            color: #065f46;
+            border-color: #bbf7d0;
+        }
+
+        .badge-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .card-body {
+            margin-top: 10px;
+            color: #374151;
+            overflow-wrap: anywhere;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px 12px;
+        }
+
+        .row .label {
+            color: #6b7280;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th,
+        .items-table td {
+            border: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 8px 12px;
+            background: #fff;
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .btn-primary { background:#3b82f6; color:#fff; border-color:#3b82f6; }
+        .btn-success { background:#10b981; color:#fff; border-color:#10b981; }
+        .btn-danger  { background:#ef4444; color:#fff; border-color:#ef4444; }
+
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(0,0,0,0.08); }
+
+        /* Your Orders Header Styling */
+        .menu-header {
+            text-align: center;
+            padding: 28px 16px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(245, 245, 245, 0.6));
+            border-radius: 20px;
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+            animation: fadeIn .5s ease-out;
+        }
+
+        .menu-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1f2937;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ff8c2b, #ffd369, #fbb700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .menu-header p {
+            font-size: 15px;
+            color: #6b7280;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dark theme adjustments */
+        body.dark-theme .menu-header {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.6), rgba(17, 24, 39, 0.5));
+            border-color: rgba(75, 85, 99, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-theme .menu-header h1 {
+            color: #f3f4f6;
+        }
+
+        body.dark-theme .menu-header p {
+            color: #d1d5db;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .menu-header {
+                padding: 20px 14px;
+                border-radius: 16px;
+                margin-bottom: 18px;
+            }
+
+            .menu-header h1 {
+                font-size: 26px;
+                margin-bottom: 6px;
+            }
+
+            .menu-header p {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-header {
+                padding: 16px 12px;
+                border-radius: 14px;
+                margin-bottom: 14px;
+            }
+
+            .menu-header h1 {
+                font-size: 22px;
+                margin-bottom: 4px;
+            }
+
+            .menu-header p {
+                font-size: 13px;
+            }
+        }
+
+        /* Mobile Responsiveness for User Dashboard */
+        @media (max-width: 1024px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-layout {
+                margin: 12px auto;
+                padding: 0 12px;
+            }
+
+            .orders-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 10px;
+            }
+
+            .orders-header {
+                gap: 6px;
+                flex-direction: column;
+            }
+
+            .orders-header input,
+            .orders-header button {
+                width: 100%;
+                padding: 11px 10px;
+                font-size: 14px;
+            }
+
+            .order-card {
+                padding: 14px;
+                border-radius: 14px;
+            }
+
+            .card-head {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .badge {
+                padding: 5px 9px;
+                font-size: 11px;
+            }
+
+            .card-body {
+                font-size: 14px;
+                margin-top: 8px;
+            }
+
+            .row {
+                gap: 6px 10px;
+                font-size: 13px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 5px 6px;
+                font-size: 12px;
+            }
+
+            .actions {
+                gap: 6px;
+                margin-top: 10px;
+            }
+
+            .btn {
+                padding: 7px 10px;
+                font-size: 12px;
+                border-radius: 10px;
+                flex: 1;
+            }
+
+            .btn-danger {
+                flex: 0.6;
+            }
+
+            .items-accordion {
+                margin-top: 8px;
+            }
+
+            .items-table-wrap {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-layout {
+                gap: 10px;
+                margin: 10px auto;
+                padding: 0 10px;
+            }
+
+            .orders-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .orders-header {
+                gap: 8px;
+            }
+
+            .orders-header input {
+                width: 100%;
+                padding: 10px 10px;
+                font-size: 13px;
+                margin-bottom: 2px;
+            }
+
+            .orders-header button {
+                width: 100%;
+                padding: 10px 10px;
+                font-size: 13px;
+                margin-top: 2px;
+            }
+
+            .order-card {
+                padding: 12px;
+                border-radius: 12px;
+                margin-bottom: 8px;
+            }
+
+            .order-card:hover {
+                transform: scale(1.0);
+            }
+
+            .card-head {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .badges {
+                width: 100%;
+                gap: 4px;
+            }
+
+            .badge {
+                padding: 4px 8px;
+                font-size: 10px;
+                white-space: nowrap;
+            }
+
+            .badge-id {
+                min-width: fit-content;
+            }
+
+            .card-body {
+                font-size: 13px;
+                margin-top: 8px;
+            }
+
+            .row {
+                gap: 4px 8px;
+                font-size: 12px;
+            }
+
+            .row .label {
+                font-weight: 600;
+                color: #4b5563;
+            }
+
+            .amount {
+                font-weight: 700;
+                color: #1f2937;
+            }
+
+            .timestamp {
+                font-size: 11px;
+                color: #9ca3af;
+            }
+
+            .items-accordion {
+                margin-top: 8px;
+            }
+
+            .items-accordion summary {
+                padding: 8px;
+                background: #f9fafb;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 12px;
+            }
+
+            .items-accordion summary:hover {
+                background: #f3f4f6;
+            }
+
+            .items-accordion summary span:last-child {
+                float: right;
+            }
+
+            .items-table {
+                font-size: 11px;
+                margin-top: 6px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 4px 4px;
+                font-size: 11px;
+                border: 1px solid #e5e7eb;
+            }
+
+            .items-table th {
+                background: #f9fafb;
+                font-weight: 600;
+            }
+
+            .items-table-wrap {
+                max-height: 250px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 8px;
+                border: 1px solid #e5e7eb;
+            }
+
+            .actions {
+                gap: 6px;
+                margin-top: 10px;
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                padding: 9px 10px;
+                font-size: 12px;
+                border-radius: 10px;
+                width: 100%;
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .btn:active {
+                transform: scale(0.98);
+            }
+
+            #infoMessage {
+                width: 100%;
+                font-size: 12px;
+                word-break: break-word;
+            }
+        }
+
+        /* Extra small devices (< 360px) */
+        @media (max-width: 360px) {
+            .menu-header {
+                padding: 14px 10px;
+                margin-bottom: 12px;
+            }
+
+            .menu-header h1 {
+                font-size: 20px;
+            }
+
+            .menu-header p {
+                font-size: 12px;
+            }
+
+            .order-card {
+                padding: 10px;
+            }
+
+            .badge {
+                padding: 3px 6px;
+                font-size: 9px;
+            }
+
+            .btn {
+                padding: 8px 8px;
+                font-size: 11px;
+                min-height: 34px;
+            }
+        }
+
+        /* Dark theme for mobile */
+        body.dark-theme .orders-header input,
+        body.dark-theme .orders-header button {
+            background: #1f2937;
+            color: #f3f4f6;
+            border-color: #374151;
+        }
+
+        body.dark-theme .order-card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+
+        body.dark-theme .card-body {
+            color: #e5e7eb;
+        }
+
+        body.dark-theme .row .label {
+            color: #9ca3af;
+        }
+
+        body.dark-theme .items-table th,
+        body.dark-theme .items-table td {
+            border-color: #374151;
+        }
+
+        body.dark-theme .items-accordion summary {
+            background: #111827;
+            color: #f3f4f6;
+        }
+
+        body.dark-theme .items-accordion summary:hover {
+            background: #1f2937;
+        }
+
+        body.dark-theme .items-table th {
+            background: #111827;
+        }
+
+        body.dark-theme .badge {
+            background: #374151;
+            color: #e5e7eb;
+            border-color: #4b5563;
+        }
+    </style>
+</head>
+
+<body class="background-image admin-page">
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">RAJ SWEET MART</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-button">Home</a>
+                <a href="menu.html" class="nav-button">Menu</a>
+                <a href="diwali.html" class="nav-button">Diwali-Special</a>
+                <a href="contact.html" class="nav-button">Contact</a>
+                <a href="order.html" class="nav-button">Order Now</a>
+                <a href="user-dashboard.html" class="nav-button">My Orders</a>
+            </div>
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span id="menu-icon">☰</span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobile-nav">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="menu.html" class="mobile-nav-link">Menu</a>
+            <a href="diwali.html" class="mobile-nav-link">Diwali-Special</a>
+            <a href="contact.html" class="mobile-nav-link">Contact</a>
+            <a href="order.html" class="mobile-nav-link">Order Now</a>
+            <a href="user-dashboard.html" class="mobile-nav-link">My Orders</a>
+        </div>
+        <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+    </nav>
+
+    <main class="admin-layout">
+        <div class="main-pane">
+            <header class="menu-header">
+                <h1>Your Orders</h1>
+                <p>View or delete orders placed with your phone number.</p>
+            </header>
+            <div class="orders-section">
+                <div class="orders-header">
+                    <input type="text" id="phoneInput" placeholder="Enter phone number" />
+                    <input type="text" id="tokenInput" placeholder="Access token (from checkout)" />
+                    <button id="loadOrdersBtn" class="btn">Load</button>
+                    <span id="infoMessage" style="color:#6b7280;"></span>
+                </div>
+                <div id="ordersContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/script.js"></script>
+    <script src="/js/user-dashboard.js"></script>
+</body>
+
+</html>

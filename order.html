@@ -527,6 +527,144 @@
             border-color: #f59e42;
             box-shadow: 0 0 0 4px rgba(245, 158, 66, 0.22), 0 8px 24px rgba(0, 0, 0, 0.35);
         }
+
+        /* View Order and Token Button Styles */
+        .order-action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            align-items: center;
+        }
+
+        .view-order-btn,
+        .token-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+            font-size: 14px;
+        }
+
+        .view-order-btn {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(59, 130, 246, 0.28);
+        }
+
+        .view-order-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 14px 32px rgba(59, 130, 246, 0.35);
+        }
+
+        .view-order-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.22);
+        }
+
+        .token-btn {
+            background: linear-gradient(90deg, #10b981, #059669);
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(16, 185, 129, 0.28);
+        }
+
+        .token-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 14px 32px rgba(16, 185, 129, 0.35);
+        }
+
+        .token-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.22);
+        }
+
+        .token-display {
+            background: linear-gradient(135deg, #f0f9ff, #f8fafc);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1e40af;
+            word-break: break-all;
+            min-width: 150px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        body.dark-theme .token-display {
+            background: linear-gradient(135deg, #1e3a8a, #0f172a);
+            border-color: #60a5fa;
+            color: #93c5fd;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .order-action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .view-order-btn,
+            .token-btn {
+                width: 100%;
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .token-display {
+                padding: 10px 12px;
+                font-size: 12px;
+                min-width: unset;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .order-action-buttons {
+                gap: 8px;
+            }
+
+            .view-order-btn,
+            .token-btn {
+                padding: 10px 14px;
+                font-size: 12px;
+                border-radius: 12px;
+            }
+
+            .token-display {
+                padding: 8px 10px;
+                font-size: 11px;
+                border-radius: 10px;
+            }
+        }
+
+        /* Dark theme button enhancements */
+        body.dark-theme .view-order-btn {
+            background: linear-gradient(90deg, #1e40af, #1e3a8a);
+            box-shadow: 0 10px 24px rgba(30, 64, 175, 0.35);
+        }
+
+        body.dark-theme .view-order-btn:hover {
+            box-shadow: 0 14px 32px rgba(30, 64, 175, 0.45);
+        }
+
+        body.dark-theme .token-btn {
+            background: linear-gradient(90deg, #065f46, #047857);
+            box-shadow: 0 10px 24px rgba(6, 95, 70, 0.35);
+        }
+
+        body.dark-theme .token-btn:hover {
+            box-shadow: 0 14px 32px rgba(6, 95, 70, 0.45);
+        }
     </style>
 </head>
 
@@ -541,6 +679,7 @@
                 <a href="diwali.html" class="nav-button">Diwali-Special</a>
                 <a href="contact.html" class="nav-button">Contact</a>
                 <a href="order.html" class="nav-button">Order Now</a>
+                <a href="user-dashboard.html" class="nav-button">My Orders</a>
             </div>
             <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
                 <i class="fas fa-moon"></i>
@@ -555,6 +694,7 @@
             <a href="diwali.html" class="mobile-nav-link">Diwali Special</a>
             <a href="contact.html" class="mobile-nav-link">Contact</a>
             <a href="order.html" class="mobile-nav-link">Order Now</a>
+            <a href="user-dashboard.html" class="mobile-nav-link">My Orders</a>
         </div>
         <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
     </nav>
@@ -589,7 +729,7 @@
             <h2>Pay via Paytm</h2><br><br>
             <div class="qr-card">
                 <div class="amount-title">Amount to Pay: ₹ <span id="payAmount" class="amt">0</span></div><br>
-                <img id="paytmQR" src="logo/qrr.png" alt="Paytm QR" />
+                <img id="paytmQR" src="logo/QR.png" alt="Paytm QR" />
                 <div class="qr-hint"></div>
             </div>
             <div class="float-field" style="margin-top: 8px;">
@@ -598,7 +738,7 @@
             </div><br>
             <div class="float-field" style="margin-top: 10px;">
                 <input id="paymentScreenshot" type="file" accept="image/*" placeholder=" ">
-                <label for="paymentScreenshot">Upload payment screenshot (optional)</label>
+                <label for="paymentScreenshot">Upload payment screenshot</label>
             </div>
             <div id="screenshotPreview" style="margin-top: 10px;"></div>
         </section><br><br>

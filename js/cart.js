@@ -86,9 +86,38 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.style.marginTop = '8px';
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
+            
+            // Trigger pulse animation
+            btn.classList.add('pulse');
+            
+            // Add success glow animation
+            setTimeout(() => {
+                btn.classList.add('success');
+            }, 100);
+            
+            // Show cart notification
+            const notification = document.createElement('div');
+            notification.className = 'cart-notification';
+            notification.innerHTML = `<i class="fas fa-check-circle" style="margin-right: 8px;"></i>${name} added to cart!`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation completes
+            setTimeout(() => {
+                notification.remove();
+            }, 1000);
+            
+            // Add item to cart
             addToCart({ id, name, price });
-            btn.textContent = 'Added!';
-            setTimeout(() => (btn.textContent = 'Add to Cart'), 1000);
+            
+            // Update button text and back to original
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Added!';
+            
+            // Reset button styles and text
+            setTimeout(() => {
+                btn.classList.remove('pulse', 'success');
+                btn.textContent = originalText;
+            }, 1500);
         });
         details.appendChild(btn);
     });

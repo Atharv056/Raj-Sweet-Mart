@@ -117,6 +117,8 @@ document.addEventListener('DOMContentLoaded', function () {
       showMessage('error', errs.join(' '));
       return;
     }
+    // create a small random token for access
+    const accessToken = Math.random().toString(36).substring(2, 10);
     const order = {
       id: 'ORD-' + Date.now(),
       customerName: nameEl.value.trim(),
@@ -127,17 +129,91 @@ document.addEventListener('DOMContentLoaded', function () {
       txnId: txnIdEl.value.trim(),
       proofScreenshot: screenshotPreview.dataset.img || '',
       status: 'Payment Pending Verification',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      accessToken: accessToken
     };
-    try {
-      const existing = JSON.parse(localStorage.getItem('rsm_orders') || '[]');
-      existing.push(order);
-      localStorage.setItem('rsm_orders', JSON.stringify(existing));
-      clearCart();
-      renderCart();
-      showMessage('success', 'Order submitted! We will verify your payment shortly.');
-    } catch (e) {
-      showMessage('error', 'Failed to save order. Please try again.');
+      // safer save: try storing order, retry without screenshot if quota exceeded
+      function trySaveOrder(o) {
+        const existing = JSON.parse(localStorage.getItem('rsm_orders') || '[]');
+        existing.push(o);
+        localStorage.setItem('rsm_orders', JSON.stringify(existing));
+      }
+
+      try {
+        trySaveOrder(order);
+        // remember user phone and token for dashboard lookup
+        localStorage.setItem('rsm_user_phone', phoneEl.value.trim());
+        localStorage.setItem('rsm_user_token', accessToken);
+        clearCart();
+        renderCart();
+        showMessage('success', 'Order submitted successfully!');
+        // provide quick link to dashboard with styled buttons
+        msgEl.innerHTML += `
+          <div class="order-action-buttons">
+            <a href="user-dashboard.html" class="view-order-btn">
+              <i class="fas fa-eye"></i> View Order
+            </a>
+            <div class="token-display" title="Copy token">${accessToken}</div>
+            <button class="token-btn" onclick="copyToken('${accessToken}')" title="Copy to clipboard">
+              <i class="fas fa-copy"></i> Copy Token
+            </button>
+          </div>
+        `;
+      } catch (e) {
+        // if storage quota exceeded, try again without screenshot (common cause)
+        console.error('Failed to save order to localStorage:', e);
+        const isQuota = (e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22));
+        if (isQuota && order.proofScreenshot) {
+          try {
+            const fallback = Object.assign({}, order, { proofScreenshot: '' });
+            trySaveOrder(fallback);
+            localStorage.setItem('rsm_user_phone', phoneEl.value.trim());
+            localStorage.setItem('rsm_user_token', accessToken);
+            clearCart();
+            renderCart();
+            showMessage('success', 'Order submitted (without screenshot due to storage limits).');
+            msgEl.innerHTML += `
+              <div class="order-action-buttons">
+                <a href="user-dashboard.html" class="view-order-btn">
+                  <i class="fas fa-eye"></i> View Order
+                </a>
+                <div class="token-display" title="Copy token">${accessToken}</div>
+                <button class="token-btn" onclick="copyToken('${accessToken}')" title="Copy to clipboard">
+                  <i class="fas fa-copy"></i> Copy Token
+                </button>
+              </div>
+            `;
+            return;
+          } catch (e2) {
+            console.error('Fallback save without screenshot also failed:', e2);
+          }
+        }
+        // show developer-friendly hint to user and log
+        showMessage('error', 'Failed to save order. ' + (e && e.message ? e.message : 'Please try again.'));
     }
   });
 });
+
+// Function to copy token to clipboard
+function copyToken(token) {
+  navigator.clipboard.writeText(token).then(function() {
+    // Show temporary success feedback
+    const btn = event.target.closest('.token-btn');
+    if (btn) {
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function() {
+        btn.innerHTML = originalText;
+      }, 2000);
+    }
+  }).catch(function(err) {
+    // Fallback for older browsers
+    const textarea = document.createElement('textarea');
+    textarea.value = token;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('Token copied to clipboard!');
+  });
+}

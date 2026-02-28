@@ -1,22 +1,10 @@
-// Admin page to list and update orders stored in localStorage
+// User dashboard to view and delete own orders
 document.addEventListener('DOMContentLoaded', function () {
-  const isAuthed = localStorage.getItem('rsm_admin_logged_in') === 'true';
-  if (!isAuthed) {
-    window.location.href = 'admin-login.html';
-    return;
-  }
   const container = document.getElementById('ordersContainer');
-  const clearBtn = document.getElementById('clearOrdersBtn');
-  const filterEl = document.getElementById('filterStatus');
-  const searchEl = document.getElementById('searchInput');
-  const countEl = document.getElementById('ordersCount');
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', function () {
-      localStorage.removeItem('rsm_admin_logged_in');
-      window.location.href = 'admin-login.html';
-    });
-  }
+  const phoneEl = document.getElementById('phoneInput');
+  const tokenEl = document.getElementById('tokenInput');
+  const loadBtn = document.getElementById('loadOrdersBtn');
+  const infoEl = document.getElementById('infoMessage');
 
   function getOrders() {
     try {
@@ -25,24 +13,19 @@ document.addEventListener('DOMContentLoaded', function () {
       return [];
     }
   }
+
   function saveOrders(orders) {
     localStorage.setItem('rsm_orders', JSON.stringify(orders));
-  }
-  function statusClass(s) {
-    const t = (s || '').toLowerCase();
-    if (t === 'verified') return 'badge badge-verified';
-    if (t === 'delivered') return 'badge badge-delivered';
-    if (t === 'cancelled') return 'badge badge-cancelled';
-    return 'badge badge-pending';
   }
 
   function ymd(d) {
     const dt = new Date(d);
-    return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
   }
+
   function labelForDate(d) {
     const today = new Date();
-    const dayMs = 24*60*60*1000;
+    const dayMs = 24 * 60 * 60 * 1000;
     const target = new Date(d);
     const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
     const t1 = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
@@ -54,18 +37,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function render() {
     let orders = getOrders();
-    const f = (filterEl && filterEl.value) || 'All';
-    const q = (searchEl && searchEl.value || '').trim().toLowerCase();
-    if (f !== 'All') orders = orders.filter(o => (o.status || 'Pending') === f);
-    if (q) orders = orders.filter(o =>
-      (o.id || '').toLowerCase().includes(q) ||
-      (o.customerName || '').toLowerCase().includes(q)
-    );
-    if (countEl) countEl.textContent = orders.length ? `${orders.length} orders` : 'No orders';
-    if (orders.length === 0) {
-      container.innerHTML = '<p style="color:#6b7280;">No orders found.</p>';
+    const phone = (phoneEl && phoneEl.value.trim()) || localStorage.getItem('rsm_user_phone') || '';
+    const token = (tokenEl && tokenEl.value.trim()) || localStorage.getItem('rsm_user_token') || '';
+    if (!phone || !token) {
+      infoEl.textContent = 'Enter your phone number and access token to view your orders.';
+      container.innerHTML = '';
       return;
     }
+    infoEl.textContent = '';
+    orders = orders.filter(o => o.phone === phone && (o.accessToken || '') === token);
+    if (orders.length === 0) {
+      container.innerHTML = '<p style="color:#6b7280;">No orders found for this number.</p>';
+      return;
+    }
+    // group by date
     orders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
     const groups = {};
     orders.forEach(o => {
@@ -73,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!groups[key]) groups[key] = [];
       groups[key].push(o);
     });
-    const keys = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
+    const keys = Object.keys(groups).sort((a,b)=> new Date(b) - new Date(a));
     const sections = keys.map(key => {
       const title = labelForDate(key);
       const cards = groups[key].map(o => {
@@ -81,15 +66,13 @@ document.addEventListener('DOMContentLoaded', function () {
           const sub = (i.price * i.qty).toFixed(2);
           return `<tr><td>${i.name}</td><td>${i.qty}</td><td>₹ ${i.price.toFixed(2)}</td><td>₹ ${sub}</td></tr>`;
         }).join('');
-        const proof = o.proofScreenshot ? `<div style="margin-top:8px;"><img src="${o.proofScreenshot}" alt="Proof" style="max-width:220px; border-radius:12px; border:1px solid #e5e7eb;" /></div>` : '';
-        const cls = statusClass(o.status || 'Pending');
         return `
         <div class="order-card" data-id="${o.id}">
           <div class="card-head">
             <div class="badges">
               <span class="badge badge-id">${o.id}</span>
             </div>
-            <span class="${cls}">${o.status || 'Pending'}</span>
+            <span class="badge badge-pending">${o.status || 'Pending'}</span>
           </div>
           <div class="card-body">
             <div class="row">
@@ -98,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
               <div class="label">Total</div><div class="amount">₹ ${o.totalAmount.toFixed(2)}</div>
               <div class="label">Created</div><div class="timestamp">${new Date(o.createdAt).toLocaleString()}</div>
             </div>
-            ${proof}
             <div class="items-accordion">
               <details class="order-items">
                 <summary><span>Items</span><span>▾</span></summary>
@@ -111,8 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
               </details>
             </div>
             <div class="actions">
-              <button class="btn btn-primary" data-action="verify" data-id="${o.id}">✔ Mark Verified</button>
-              <button class="btn btn-success" data-action="deliver" data-id="${o.id}">🚚 Mark Delivered</button>
               <button class="btn btn-danger" data-action="delete" data-id="${o.id}">🗑 Delete</button>
             </div>
           </div>
@@ -130,38 +110,43 @@ document.addEventListener('DOMContentLoaded', function () {
     container.innerHTML = sections;
   }
 
-  container.addEventListener('click', function (e) {
+  function load() {
+    localStorage.setItem('rsm_user_phone', phoneEl.value.trim());
+    if (tokenEl) localStorage.setItem('rsm_user_token', tokenEl.value.trim());
+    render();
+  }
+
+  if (loadBtn) loadBtn.addEventListener('click', load);
+  if (phoneEl) phoneEl.addEventListener('keypress', function(e){ if(e.key==='Enter'){ load(); } });
+
+  // auto load if phone and token saved
+  const savedPhone = localStorage.getItem('rsm_user_phone');
+  const savedToken = localStorage.getItem('rsm_user_token');
+  if (savedPhone && phoneEl) phoneEl.value = savedPhone;
+  if (savedToken && tokenEl) tokenEl.value = savedToken;
+  if (savedPhone && savedToken) render();
+
+  container.addEventListener('click', function(e) {
     const btn = e.target.closest('button');
     if (!btn) return;
     const action = btn.dataset.action;
     const id = btn.dataset.id;
-    const orders = getOrders();
-    const idx = orders.findIndex(o => o.id === id);
-    if (idx < 0) return;
-    if (action === 'verify') {
-      orders[idx].status = 'Verified';
-    } else if (action === 'deliver') {
-      orders[idx].status = 'Delivered';
-    } else if (action === 'delete') {
+    if (action === 'delete') {
+      const ordersAll = getOrders();
+      const target = ordersAll.find(o => o.id === id);
+      if (!target) return;
+      const currentToken = (tokenEl && tokenEl.value.trim()) || localStorage.getItem('rsm_user_token') || '';
+      if ((target.accessToken || '') !== currentToken) {
+        alert('Invalid access token. Deletion denied.');
+        return;
+      }
       // Confirm before deleting
       if (!confirm(`Are you sure you want to delete order ${id}?\n\nThis action cannot be undone.`)) {
         return;
       }
-      orders.splice(idx, 1);
-    }
-    saveOrders(orders);
-    render();
-  });
-
-  clearBtn.addEventListener('click', function () {
-    if (confirm('Clear all orders?')) {
-      saveOrders([]);
+      let orders = ordersAll.filter(o => o.id !== id);
+      saveOrders(orders);
       render();
     }
   });
-
-  if (filterEl) filterEl.addEventListener('change', render);
-  if (searchEl) searchEl.addEventListener('input', render);
-
-  render();
 });

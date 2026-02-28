@@ -23,6 +23,109 @@
     opacity: 1;
 }
 
+/* Add to Cart Button Animations */
+.add-to-cart-btn {
+    background: linear-gradient(135deg, #ff8c2b, #ffb703);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 140, 43, 0.3);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.add-to-cart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 140, 43, 0.4);
+}
+
+.add-to-cart-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 140, 43, 0.3);
+}
+
+/* Ripple effect on click */
+.add-to-cart-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    pointer-events: none;
+}
+
+.add-to-cart-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Pulse animation when clicked */
+@keyframes pulse-add {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.add-to-cart-btn.pulse {
+    animation: pulse-add 0.6s ease;
+}
+
+/* Success state animation */
+@keyframes success-glow {
+    0% {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    100% {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+}
+
+.add-to-cart-btn.success {
+    animation: success-glow 0.6s ease;
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+}
+
+/* Floating animation for success message */
+@keyframes float-up {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.8);
+    }
+}
+
+.cart-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    z-index: 10000;
+    animation: float-up 0.8s ease forwards;
+    pointer-events: none;
+}
+
 /* Categories Section */
 .categories-section {
     background: rgba(255, 255, 255, 0.05);
