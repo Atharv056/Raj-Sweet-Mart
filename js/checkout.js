@@ -1,4 +1,45 @@
 // Checkout page logic with validation and localStorage order storage
+//
+// ISSUE
+// The current implementation stores orders in localStorage. Each browser/device
+// has its own separate localStorage, so:
+//   Customer A orders from Device 1 → saved in Device 1's storage
+//   Customer B orders from Device 2 → saved in Device 2's storage
+//   Admin opens panel on Device 3 → reads Device 3's (empty) storage
+// Therefore the admin panel can never see orders placed on other devices.
+// localStorage is scoped to a single origin+browser profile and is not shared.
+//
+// SOLUTION (Option 1: Use Firebase - Easiest / free tier)
+// No server code required. Use Firebase Realtime Database or Firestore:
+//    • All clients connect to the same cloud database
+//    • Customers write orders to Firebase
+//    • Admin panel reads orders from Firebase in real time
+// Setup takes ~10 minutes and works on any device.
+//
+// (Option 2 would be to host your own backend/API and store orders in a
+// central database, but Firebase removes that overhead.)
+
+//
+// ✅ Option 1: Use Firebase (Best for You)
+//
+// Use Firebase (Google’s backend service) instead of localStorage.
+//
+// How It Works
+//    Customer Device → Firebase Database → Admin Device
+//    (All connected to same cloud database)
+//
+// Instead of saving orders in localStorage:
+//    • Save orders in Firebase Realtime Database
+//    • All devices read/write from same cloud database
+//    • Admin panel automatically sees new orders
+//
+// Flow:
+//    Customer Device → Firebase Database → Admin Device
+//    (All connected to same cloud database)
+//
+// This ensures that orders placed from any device are visible
+// to the admin panel in real time.
+
 document.addEventListener('DOMContentLoaded', function () {
   const cartEl = document.getElementById('cartContainer');
   const totalEl = document.getElementById('cartTotal');
