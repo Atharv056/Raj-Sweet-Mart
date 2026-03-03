@@ -6,17 +6,24 @@ document.addEventListener('DOMContentLoaded', function () {
   const loadBtn = document.getElementById('loadOrdersBtn');
   const infoEl = document.getElementById('infoMessage');
 
+  // shared orders array synced from Firebase
+  let orders = [];
+  const ordersRef = firebase.database().ref('orders');
+  ordersRef.on('value', snapshot => {
+    orders = [];
+    snapshot.forEach(child => {
+      const o = child.val();
+      o.id = child.key;
+      orders.push(o);
+    });
+    render();
+  });
+
   function getOrders() {
-    try {
-      return JSON.parse(localStorage.getItem('rsm_orders') || '[]');
-    } catch (e) {
-      return [];
-    }
+    return orders.slice();
   }
 
-  function saveOrders(orders) {
-    localStorage.setItem('rsm_orders', JSON.stringify(orders));
-  }
+  // saveOrders is no longer needed; updates go directly to Firebase
 
   function ymd(d) {
     const dt = new Date(d);
@@ -144,9 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!confirm(`Are you sure you want to delete order ${id}?\n\nThis action cannot be undone.`)) {
         return;
       }
-      let orders = ordersAll.filter(o => o.id !== id);
-      saveOrders(orders);
-      render();
+      // remove from Firebase
+      firebase.database().ref('orders/' + id).remove();
     }
   });
 });

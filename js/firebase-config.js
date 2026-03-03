@@ -8,12 +8,13 @@
 
 // Import the functions you need from the SDKs you need
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// Firebase Configuration - Initialize Firebase
+// NOTE: Replace with your Firebase config from Firebase Console
+// This file no longer uses ES modules; it relies on the global `firebase`
+// object loaded via the CDN scripts in the HTML pages.
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
+var firebaseConfig = {
     apiKey: "AIzaSyDQq-uRV5V-tTPTlEVG5Lx0uBvc_GptGt0",
     authDomain: "raj-sweet-mart-603d6.firebaseapp.com",
     databaseURL: "https://raj-sweet-mart-603d6-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -23,12 +24,13 @@ const firebaseConfig = {
     appId: "1:503099076120:web:c17e2adff5642a3ff55d6d"
 };
 
-// Initialize Firebase
+// Initialize Firebase using the global namespace
+firebase.initializeApp(firebaseConfig);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// convenience reference
+var db = firebase.database();
 
-// Initialize Firebase
-const db = getDatabase(app);
-
-export { db };
+// export for modules if needed (some files may still import)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { db };
+}

@@ -66,6 +66,17 @@ const firebaseConfig = {
 };
 ```
 
+4.1 Add the Firebase SDK scripts and your config file to any HTML page that
+uses order functionality (order.html, admin.html, user-dashboard.html, etc.)
+Place them **before** your own JavaScript files so that `firebase` is
+available when your code runs. Example:
+
+```html
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
+<script src="/js/firebase-config.js"></script>
+```
+
 ## Step 5: Test Your Setup
 
 1. Open your website in a browser

@@ -764,6 +764,12 @@
         </section>
     </main>
 
+    <!-- Firebase SDKs (loads global `firebase` object) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
+    <!-- project-specific config must come before any code that uses `db` -->
+    <script src="/js/firebase-config.js"></script>
+
     <script src="/js/script.js"></script>
     <script src="/js/cart.js"></script>
     <script src="/js/checkout.js"></script>

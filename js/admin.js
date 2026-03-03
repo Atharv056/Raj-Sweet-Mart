@@ -1,4 +1,6 @@
-// Admin page to list and update orders stored in localStorage
+// Admin page to list and update orders stored in Firebase
+// realtime database (shared across all devices).
+// when Firebase is available the `orders` variable is kept in sync.
 document.addEventListener('DOMContentLoaded', function () {
   const isAuthed = localStorage.getItem('rsm_admin_logged_in') === 'true';
   if (!isAuthed) {
@@ -18,16 +20,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // orders array kept in sync by Firebase listener
+  let orders = [];
   function getOrders() {
-    try {
-      return JSON.parse(localStorage.getItem('rsm_orders') || '[]');
-    } catch (e) {
-      return [];
-    }
+    return orders.slice();
   }
-  function saveOrders(orders) {
-    localStorage.setItem('rsm_orders', JSON.stringify(orders));
-  }
+  // no need for saveOrders now; updates are pushed directly to Firebase
+
+  // reference to the orders node in database
+  const ordersRef = firebase.database().ref('orders');
+  ordersRef.on('value', snapshot => {
+    orders = [];
+    snapshot.forEach(child => {
+      const o = child.val();
+      o.id = child.key;
+      orders.push(o);
+    });
+    render();
+  });
+
   function statusClass(s) {
     const t = (s || '').toLowerCase();
     if (t === 'verified') return 'badge badge-verified';
@@ -135,28 +146,22 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!btn) return;
     const action = btn.dataset.action;
     const id = btn.dataset.id;
-    const orders = getOrders();
-    const idx = orders.findIndex(o => o.id === id);
-    if (idx < 0) return;
+    const orderRef = firebase.database().ref('orders/' + id);
     if (action === 'verify') {
-      orders[idx].status = 'Verified';
+      orderRef.update({ status: 'Verified' });
     } else if (action === 'deliver') {
-      orders[idx].status = 'Delivered';
+      orderRef.update({ status: 'Delivered' });
     } else if (action === 'delete') {
-      // Confirm before deleting
       if (!confirm(`Are you sure you want to delete order ${id}?\n\nThis action cannot be undone.`)) {
         return;
       }
-      orders.splice(idx, 1);
+      orderRef.remove();
     }
-    saveOrders(orders);
-    render();
   });
 
   clearBtn.addEventListener('click', function () {
     if (confirm('Clear all orders?')) {
-      saveOrders([]);
-      render();
+      ordersRef.remove();
     }
   });
 

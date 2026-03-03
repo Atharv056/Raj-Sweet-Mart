@@ -40,6 +40,11 @@
 // This ensures that orders placed from any device are visible
 // to the admin panel in real time.
 
+// helper: push order to Firebase
+function saveOrderToFirebase(order) {
+  return firebase.database().ref('orders').push(order);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const cartEl = document.getElementById('cartContainer');
   const totalEl = document.getElementById('cartTotal');
@@ -158,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
       showMessage('error', errs.join(' '));
       return;
     }
+
     // create a small random token for access
     const accessToken = Math.random().toString(36).substring(2, 10);
     const order = {
@@ -173,22 +179,15 @@ document.addEventListener('DOMContentLoaded', function () {
       createdAt: new Date().toISOString(),
       accessToken: accessToken
     };
-      // safer save: try storing order, retry without screenshot if quota exceeded
-      function trySaveOrder(o) {
-        const existing = JSON.parse(localStorage.getItem('rsm_orders') || '[]');
-        existing.push(o);
-        localStorage.setItem('rsm_orders', JSON.stringify(existing));
-      }
 
-      try {
-        trySaveOrder(order);
-        // remember user phone and token for dashboard lookup
+    // push order to Firebase
+    saveOrderToFirebase(order)
+      .then(() => {
         localStorage.setItem('rsm_user_phone', phoneEl.value.trim());
         localStorage.setItem('rsm_user_token', accessToken);
         clearCart();
         renderCart();
         showMessage('success', 'Order submitted successfully!');
-        // provide quick link to dashboard with styled buttons
         msgEl.innerHTML += `
           <div class="order-action-buttons">
             <a href="user-dashboard.html" class="view-order-btn">
@@ -200,38 +199,11 @@ document.addEventListener('DOMContentLoaded', function () {
             </button>
           </div>
         `;
-      } catch (e) {
-        // if storage quota exceeded, try again without screenshot (common cause)
-        console.error('Failed to save order to localStorage:', e);
-        const isQuota = (e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22));
-        if (isQuota && order.proofScreenshot) {
-          try {
-            const fallback = Object.assign({}, order, { proofScreenshot: '' });
-            trySaveOrder(fallback);
-            localStorage.setItem('rsm_user_phone', phoneEl.value.trim());
-            localStorage.setItem('rsm_user_token', accessToken);
-            clearCart();
-            renderCart();
-            showMessage('success', 'Order submitted (without screenshot due to storage limits).');
-            msgEl.innerHTML += `
-              <div class="order-action-buttons">
-                <a href="user-dashboard.html" class="view-order-btn">
-                  <i class="fas fa-eye"></i> View Order
-                </a>
-                <div class="token-display" title="Copy token">${accessToken}</div>
-                <button class="token-btn" onclick="copyToken('${accessToken}')" title="Copy to clipboard">
-                  <i class="fas fa-copy"></i> Copy Token
-                </button>
-              </div>
-            `;
-            return;
-          } catch (e2) {
-            console.error('Fallback save without screenshot also failed:', e2);
-          }
-        }
-        // show developer-friendly hint to user and log
-        showMessage('error', 'Failed to save order. ' + (e && e.message ? e.message : 'Please try again.'));
-    }
+      })
+      .catch(err => {
+        console.error('Firebase write failed', err);
+        showMessage('error', 'Failed to submit order. Please try again.');
+      });
   });
 });
 
