@@ -48,13 +48,15 @@ function saveOrderToFirebase(order) {
 document.addEventListener('DOMContentLoaded', function () {
   // sanity check: firebase must be available
   if (typeof firebase === 'undefined' || !firebase.database) {
-    console.error('Firebase SDK not loaded or initialized');
+    console.error('Firebase SDK not loaded or initialized', window.firebase);
     const msg = document.getElementById('checkoutMessage');
     if (msg) {
       msg.textContent = 'Error: cannot connect to database. Please contact support.';
       msg.style.color = '#b00020';
       msg.style.fontWeight = '600';
     }
+    // early return to avoid further errors
+    return;
   }
 
   const cartEl = document.getElementById('cartContainer');
