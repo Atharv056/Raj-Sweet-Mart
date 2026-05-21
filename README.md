@@ -1,4 +1,4 @@
-# Raj Sweet Mart 🍬
+# Raj Sweet Mart 
 
 A modern, responsive web application for **Raj Sweet Mart**, a premium sweet shop located in Badnera, Amravati. This platform allows customers to explore a wide variety of traditional Indian sweets, namkeen, and snacks, place orders, and track them in real-time.
 
@@ -44,7 +44,7 @@ A modern, responsive web application for **Raj Sweet Mart**, a premium sweet sho
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/raj-sweet-mart.git
+   git clone https://github.com/Atharv056/raj-sweet-mart.git
    cd raj-sweet-mart
    ```
 
@@ -72,8 +72,4 @@ A modern, responsive web application for **Raj Sweet Mart**, a premium sweet sho
 
 - **Address**: Bari Pura Old Town, Badnera, Amravati
 - **Opening Hours**: 7:00 AM - 10:00 PM
-- **WhatsApp**: [+91 9850937027](https://wa.me/+919850937027)
 
-## 📄 License
-
-This project is for demonstration purposes. All rights reserved by Raj Sweet Mart.
