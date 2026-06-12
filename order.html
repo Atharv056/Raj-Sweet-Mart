@@ -495,7 +495,7 @@
         }
 
         body.dark-theme .amount-title .amt {
-            background: linear-gradient(180deg, #1f1f23, #191b1e);
+            background: linear-gradient(180deg, #ffffff, #ffffff);
             color: #ffd36b;
             border-color: rgba(255, 184, 28, 0.32);
         }
@@ -526,6 +526,59 @@
         body.dark-theme .float-field textarea:focus {
             border-color: #f59e42;
             box-shadow: 0 0 0 4px rgba(245, 158, 66, 0.22), 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Improve header and section heading contrast in dark mode */
+        body.dark-theme .menu-header h1 {
+            color: #f5f5f5;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+        }
+
+        body.dark-theme .menu-header p {
+            color: #d1d5db;
+        }
+
+        body.dark-theme .checkout-card h2 {
+            color: #eaeaea;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.45);
+        }
+
+        /* Improve readability for cart table, footer, QR hint, and CTA */
+        body.dark-theme .checkout-card p {
+            color: #d1d5db;
+        }
+
+        body.dark-theme .cart-header .col-item,
+        body.dark-theme .cart-header .col-price,
+        body.dark-theme .cart-header .col-qty,
+        body.dark-theme .cart-header .col-total {
+            color: #e6e6e6;
+            font-weight: 700;
+        }
+
+        body.dark-theme .cart-row div {
+            color: #d7d7d7;
+        }
+
+        body.dark-theme .cart-footer .cart-total {
+            color: #fff;
+        }
+
+        body.dark-theme .cart-footer .nav-button {
+            background: #26282c;
+            color: #f3f4f6;
+            border-color: #2f3438;
+        }
+
+        body.dark-theme .qr-hint {
+            color: #bfc7d6;
+        }
+
+        body.dark-theme .cta-button {
+            background: linear-gradient(90deg, #f59e0b, #ef6c00);
+            color: #081018;
+            border: none;
+            box-shadow: 0 10px 30px rgba(239,108,0,0.18);
         }
 
         /* View Order and Token Button Styles */
@@ -734,10 +787,10 @@
                 <input id="txnId" type="text" placeholder=" " autocomplete="off">
                 <label for="txnId">UPI Transaction ID</label>
             </div><br>
-            <div class="float-field" style="margin-top: 10px;">
+            <!--<div class="float-field" style="margin-top: 10px;">
                 <input id="paymentScreenshot" type="file" accept="image/*" placeholder=" ">
                 <label for="paymentScreenshot">Upload payment screenshot</label>
-            </div>
+            </div>-->
             <div id="screenshotPreview" style="margin-top: 10px;"></div>
         </section><br><br>
 
@@ -761,12 +814,6 @@
             <div id="checkoutMessage"></div>
         </section>
     </main>
-
-    <!-- Firebase SDKs (loads global `firebase` object) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
-    <!-- project-specific config must come before any code that uses `db` -->
-    <script src="/js/firebase-config.js"></script>
 
     <script src="/js/script.js"></script>
     <script src="/js/cart.js"></script>

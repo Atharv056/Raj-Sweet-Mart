@@ -1,23 +1,9 @@
-// Checkout page logic with validation and localStorage order storage
-//
-// ISSUE
-// The current implementation stores orders in localStorage. Each browser/device
-// has its own separate localStorage, so:
-//   Customer A orders from Device 1 → saved in Device 1's storage
-//   Customer B orders from Device 2 → saved in Device 2's storage
-//   Admin opens panel on Device 3 → reads Device 3's (empty) storage
-// Therefore the admin panel can never see orders placed on other devices.
-// localStorage is scoped to a single origin+browser profile and is not shared.
-//
-// SOLUTION (Option 1: Use Firebase - Easiest / free tier)
-// No server code required. Use Firebase Realtime Database or Firestore:
-//    • All clients connect to the same cloud database
-//    • Customers write orders to Firebase
-//    • Admin panel reads orders from Firebase in real time
-// Setup takes ~10 minutes and works on any device.
-//
-// (Option 2 would be to host your own backend/API and store orders in a
-// central database, but Firebase removes that overhead.)
+// Checkout page logic with Google Apps Script integration
+// All orders are sent to Google Apps Script Web App endpoint
+
+// Google Apps Script Web App URL
+// Replace with your actual deployed GAS web app URL
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz_aeQuq6iWRX3pYORewYQSH0hV4mN-FT5ENIC-g0Usk3x_rWP75wOCRqbMEDHiO-RVpQ/exec';
 
 //
 // ✅ Option 1: Use Firebase (Best for You)
@@ -45,28 +31,14 @@ function saveOrderToFirebase(order) {
   return firebase.database().ref('orders').push(order);
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  // sanity check: firebase must be available
-  if (typeof firebase === 'undefined' || !firebase.database) {
-    console.error('Firebase SDK not loaded or initialized', window.firebase);
-    const msg = document.getElementById('checkoutMessage');
-    if (msg) {
-      msg.textContent = 'Error: cannot connect to database. Please contact support.';
-      msg.style.color = '#b00020';
-      msg.style.fontWeight = '600';
-    }
-    // early return to avoid further errors
-    return;
-  }
 
+document.addEventListener('DOMContentLoaded', function () {
   const cartEl = document.getElementById('cartContainer');
   const totalEl = document.getElementById('cartTotal');
   const payAmountEl = document.getElementById('payAmount');
   const clearBtn = document.getElementById('clearCartBtn');
   const qrImg = document.getElementById('paytmQR');
   const txnIdEl = document.getElementById('txnId');
-  const screenshotInput = document.getElementById('paymentScreenshot');
-  const screenshotPreview = document.getElementById('screenshotPreview');
   const submitBtn = document.getElementById('submitOrderBtn');
   const msgEl = document.getElementById('checkoutMessage');
   const nameEl = document.getElementById('customerName');
@@ -77,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
   try {
     const qru = localStorage.getItem('paytm_qr_url');
     if (qru) qrImg.src = qru;
-  } catch (e) {}
+  } catch (e) { }
 
   function renderCart() {
     const cart = getCart();
@@ -132,21 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
     renderCart();
   });
 
-  screenshotInput.addEventListener('change', function () {
-    const file = screenshotInput.files && screenshotInput.files[0];
-    if (!file) {
-      screenshotPreview.innerHTML = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function () {
-      const url = reader.result;
-      screenshotPreview.innerHTML = `<img src="${url}" alt="Payment screenshot" style="max-width: 100%; border-radius: 8px;" />`;
-      screenshotPreview.dataset.img = url;
-    };
-    reader.readAsDataURL(file);
-  });
-
   function validate() {
     const errors = [];
     const name = nameEl.value.trim();
@@ -170,6 +127,13 @@ document.addEventListener('DOMContentLoaded', function () {
     msgEl.style.fontWeight = '600';
   }
 
+  function setLoadingState(isLoading) {
+    submitBtn.disabled = isLoading;
+    submitBtn.style.opacity = isLoading ? '0.6' : '1';
+    submitBtn.style.cursor = isLoading ? 'not-allowed' : 'pointer';
+    submitBtn.innerHTML = isLoading ? '<i class="fas fa-spinner fa-spin"></i> Submitting...' : 'Submit Order';
+  }
+
   submitBtn.addEventListener('click', function () {
     const errs = validate();
     if (errs.length) {
@@ -177,66 +141,57 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // create a small random token for access
-    const accessToken = Math.random().toString(36).substring(2, 10);
-    const order = {
-      id: 'ORD-' + Date.now(),
-      customerName: nameEl.value.trim(),
+    setLoadingState(true);
+    msgEl.textContent = '';
+
+    const formattedItems = getCart()
+      .map(item => `${item.name} - ₹${item.price} - Qty: ${item.qty}`)
+      .join(" | ");
+
+    const payload = {
+      upiTransactionId: txnIdEl.value.trim(),
+      name: nameEl.value.trim(),
       phone: phoneEl.value.trim(),
       address: addrEl.value.trim(),
-      items: getCart(),
-      totalAmount: cartTotal(),
-      txnId: txnIdEl.value.trim(),
-      proofScreenshot: screenshotPreview.dataset.img || '',
-      status: 'Payment Pending Verification',
-      createdAt: new Date().toISOString(),
-      accessToken: accessToken
+      items: formattedItems,
+      totalAmount: cartTotal()
     };
 
-    // push order to Firebase
-    saveOrderToFirebase(order)
+    // Send order to Google Apps Script via FormData and no-cors
+    const formData = new FormData();
+    formData.append('upiTransactionId', payload.upiTransactionId);
+    formData.append('name', payload.name);
+    formData.append('phone', payload.phone);
+    formData.append('address', payload.address);
+    formData.append('items', JSON.stringify(payload.items));
+    formData.append('totalAmount', payload.totalAmount);
+
+    console.log('Sending FormData payload to GAS:', payload);
+    fetch(GAS_WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    })
       .then(() => {
-        localStorage.setItem('rsm_user_phone', phoneEl.value.trim());
-        localStorage.setItem('rsm_user_token', accessToken);
+        setLoadingState(false);
+
+        // Clear form and cart
         clearCart();
+        txnIdEl.value = '';
+        nameEl.value = '';
+        phoneEl.value = '';
+        addrEl.value = '';
         renderCart();
-        showMessage('success', 'Order submitted successfully!');
-        msgEl.innerHTML += `
-          <div class="order-action-buttons">
-            <div class="token-display" title="Copy token">${accessToken}</div>
-            <button class="token-btn" onclick="copyToken('${accessToken}')" title="Copy to clipboard">
-              <i class="fas fa-copy"></i> Copy Token
-            </button>
-          </div>
-        `;
+
+        // Show success message
+        showMessage('success', 'Order placed successfully!');
       })
-      .catch(err => {
-        console.error('Firebase write failed', err);
-        showMessage('error', 'Failed to submit order. Please try again.');
+      .catch(error => {
+        setLoadingState(false);
+        console.error('Order submission error:', error);
+
+        showMessage('error', 'Failed to submit order. Please check your details and try again.');
       });
   });
 });
 
-// Function to copy token to clipboard
-function copyToken(token) {
-  navigator.clipboard.writeText(token).then(function() {
-    // Show temporary success feedback
-    const btn = event.target.closest('.token-btn');
-    if (btn) {
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-      setTimeout(function() {
-        btn.innerHTML = originalText;
-      }, 2000);
-    }
-  }).catch(function(err) {
-    // Fallback for older browsers
-    const textarea = document.createElement('textarea');
-    textarea.value = token;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    alert('Token copied to clipboard!');
-  });
-}
