@@ -203,9 +203,6 @@ document.addEventListener('DOMContentLoaded', function () {
         showMessage('success', 'Order submitted successfully!');
         msgEl.innerHTML += `
           <div class="order-action-buttons">
-            <a href="user-dashboard.html" class="view-order-btn">
-              <i class="fas fa-eye"></i> View Order
-            </a>
             <div class="token-display" title="Copy token">${accessToken}</div>
             <button class="token-btn" onclick="copyToken('${accessToken}')" title="Copy to clipboard">
               <i class="fas fa-copy"></i> Copy Token
