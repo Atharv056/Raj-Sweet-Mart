@@ -62,7 +62,6 @@ A modern, responsive web application for **Raj Sweet Mart**, a premium sweet sho
 - `menu.html`: Complete product catalog with category filtering.
 - `diwali.html`: Seasonal special offerings.
 - `order.html`: Cart and checkout system.
-- `admin.html`: Admin dashboard for order management.
 - `user-dashboard.html`: Customer order history and status.
 - `js/`: Core logic, cart management, and Firebase integration.
 - `css/`: Modular stylesheets for themes and layouts.
