@@ -54,20 +54,40 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderCart() {
     const cart = getCart();
     if (cart.length === 0) {
-      cartEl.innerHTML = '<p>Your cart is empty. Go to Menu to add items.</p>';
+      cartEl.innerHTML = `
+        <div class="empty-cart-view">
+          <i class="fas fa-shopping-cart empty-icon"></i>
+          <p class="empty-text">Your cart is empty</p>
+          <p class="empty-subtext">Add some delicious sweets from our menu to start your order!</p>
+          <a href="menu.html" class="browse-menu-btn">Browse Menu</a>
+        </div>
+      `;
     } else {
       const rows = cart.map(i => `
-        <div class="cart-row">
-          <div class="col-item">${i.name}</div>
-          <div class="col-price"><span class="nowrap">₹ ${Math.round(i.price)}</span></div>
-          <div class="col-qty">
-            <button class="nav-button" data-action="dec" data-id="${i.id}">-</button>
-            <span>${i.qty}</span>
-            <button class="nav-button" data-action="inc" data-id="${i.id}">+</button>
+        <div class="checkout-item-card">
+          <div class="item-icon">
+             <i class="fas fa-cookie"></i>
           </div>
-          <div class="col-total"><span class="nowrap">₹ ${(i.price * i.qty).toFixed(2)}</span></div>
-          <div class="col-actions">
-            <button class="nav-button" data-action="remove" data-id="${i.id}">Remove</button>
+          <div class="item-details">
+            <h4 class="item-name">${i.name}</h4>
+            <div class="item-price-info">
+              <span class="unit-price">₹${Math.round(i.price)} / unit</span>
+              <span class="item-total-price">₹${(i.price * i.qty).toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="item-actions-qty">
+            <div class="qty-selector">
+              <button class="qty-btn" data-action="dec" data-id="${i.id}" aria-label="Decrease quantity">
+                <i class="fas fa-minus"></i>
+              </button>
+              <span class="qty-value">${i.qty}</span>
+              <button class="qty-btn" data-action="inc" data-id="${i.id}" aria-label="Increase quantity">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <button class="remove-item-btn" data-action="remove" data-id="${i.id}" aria-label="Remove item">
+              <i class="fas fa-trash-alt"></i>
+            </button>
           </div>
         </div>
       `).join('');
@@ -123,7 +143,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function showMessage(type, text) {
     msgEl.textContent = text;
-    msgEl.style.color = type === 'error' ? '#b00020' : '#116611';
+    msgEl.className = 'show';
+    msgEl.style.background = type === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+    msgEl.style.color = type === 'error' ? '#ef4444' : '#10b981';
+    msgEl.style.border = type === 'error' ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(16, 185, 129, 0.2)';
     msgEl.style.fontWeight = '600';
   }
 
@@ -131,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
     submitBtn.disabled = isLoading;
     submitBtn.style.opacity = isLoading ? '0.6' : '1';
     submitBtn.style.cursor = isLoading ? 'not-allowed' : 'pointer';
-    submitBtn.innerHTML = isLoading ? '<i class="fas fa-spinner fa-spin"></i> Submitting...' : 'Submit Order';
+    submitBtn.innerHTML = isLoading ? '<i class="fas fa-spinner fa-spin"></i> Processing...' : '<i class="fas fa-check-circle"></i> Place Order';
   }
 
   submitBtn.addEventListener('click', function () {
