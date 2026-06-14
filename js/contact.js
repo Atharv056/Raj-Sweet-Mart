@@ -177,26 +177,15 @@ function initializeFAQ() {
     const faqItems = document.querySelectorAll('.faq-item');
     
     faqItems.forEach(item => {
-        const question = item.querySelector('.faq-question');
-        if (question) {
-            question.addEventListener('click', () => toggleFAQ(item));
-        }
+        // Use native toggle event to sync active class with open state
+        item.addEventListener('toggle', () => {
+            if (item.open) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
     });
-}
-
-// Toggle FAQ item
-function toggleFAQ(faqItem) {
-    const isActive = faqItem.classList.contains('active');
-    
-    // Close all FAQ items
-    document.querySelectorAll('.faq-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    // Open clicked item if it wasn't active
-    if (!isActive) {
-        faqItem.classList.add('active');
-    }
 }
 
 // Success Modal
@@ -291,42 +280,7 @@ function checkHours() {
     showCustomModal('Business Hours', hoursHtml);
 }
 
-// Check business hours
-function checkHours() {
-    const hours = {
-        'Monday': '8:00 AM - 10:00 PM',
-        'Tuesday': '8:00 AM - 10:00 PM',
-        'Wednesday': '8:00 AM - 10:00 PM',
-        'Thursday': '8:00 AM - 10:00 PM',
-        'Friday': '8:00 AM - 10:00 PM',
-        'Saturday': '8:00 AM - 10:00 PM',
-        'Sunday': '9:00 AM - 9:00 PM'
-    };
-    
-    const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-    const currentTime = new Date().toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-    });
-    
-    let hoursHtml = '<h3>Business Hours</h3><ul style="list-style: none; padding: 0;">';
-    
-    Object.entries(hours).forEach(([day, time]) => {
-        const isCurrentDay = day === currentDay;
-        const dayStyle = isCurrentDay ? 'font-weight: bold; color: #ff6b6b;' : '';
-        hoursHtml += <li style="${dayStyle} margin-bottom: 10px;">${day}: ${time}</li>;
-    });
-    
-    hoursHtml += '</ul>';
-    
-    if (currentDay in hours) {
-        hoursHtml += <p style="margin-top: 20px; font-weight: bold;">Today (${currentDay}): ${hours[currentDay]}</p>;
-        hoursHtml += <p>Current time: ${currentTime}</p>;
-    }
-    
-    showCustomModal('Business Hours', hoursHtml);
-}
+
 
 // Show custom modal
 function showCustomModal(title, content) {
