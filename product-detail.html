@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Set dark theme class before CSS loads to prevent white flash
@@ -18,12 +19,14 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/product-detail.css">
 </head>
+
 <body class="background-image">
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="logo">
-                <a href="index.html" style="text-decoration: none; color: inherit;"><span class="logo-text">RAJ SWEET MART</span></a>
+                <a href="index.html" style="text-decoration: none; color: inherit;"><span class="logo-text">RAJ SWEET
+                        MART</span></a>
             </div>
 
             <div class="nav-links">
@@ -40,17 +43,17 @@
                     <span>Cart</span>
                     <span id="nav-cart-count" class="nav-cart-count">0</span>
                 </a>
-                
-                <!-- Theme toggle button -->
-            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
-                <i class="fas fa-moon"></i>
-            </button>
 
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                <span id="menu-icon">☰</span>
-            </button>
-        </div>
+                <!-- Theme toggle button -->
+                <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
+                    <i class="fas fa-moon"></i>
+                </button>
+
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <span id="menu-icon">☰</span>
+                </button>
             </div>
+        </div>
         </div>
 
         <div class="mobile-nav" id="mobile-nav">
@@ -65,53 +68,103 @@
     </nav>
 
     <div class="page-container">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb-nav">
+            <a href="index.html">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="menu.html">Menu</a>
+            <i class="fas fa-chevron-right"></i>
+            <span class="active-crumb" id="breadcrumb-product-name">Product Detail</span>
+        </div>
+
         <div class="product-detail-container">
             <div class="product-image-section">
-                <img id="product-img" src="" alt="Product Image">
-            </div>
-            
-            <div class="product-info-section">
-                <h1 id="product-name" class="product-name"></h1>
-                <p id="product-price" class="product-price"></p>
-                
-                <!-- Quick Add 1kg Button -->
-                <button id="quick-add-btn" class="quick-add-btn">
-                    <i class="fas fa-cart-plus"></i> Add to Cart - 1kg
-                </button>
-                
-                <div class="divider">
-                    <span>OR</span>
+                <div class="image-wrapper">
+                    <img id="product-img" src="" alt="Product Image">
+                    <div class="veg-badge-overlay">
+                        <span class="veg-dot"></span>
+                    </div>
                 </div>
-                
+            </div>
+
+            <div class="product-info-section">
+                <!-- Badges -->
+                <div class="product-badges">
+                    <span class="badge badge-veg">
+                        <span class="veg-square"><span class="veg-circle"></span></span> 100% Vegetarian
+                    </span>
+                    <span class="badge badge-ghee">
+                        <i class="fas fa-crown"></i> Premium Quality
+                    </span>
+                </div>
+
+                <h1 id="product-name" class="product-name"></h1>
+                <div class="product-rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="rating-text">4.8 (120+ reviews)</span>
+                </div>
+
+                <p id="product-price" class="product-price"></p>
+                <p class="price-subtitle">Inclusive of all taxes</p>
+
+                <!-- Weight Presets -->
+                <div class="presets-section">
+                    <label class="section-label">Choose Package Size:</label>
+                    <div class="preset-pills" id="preset-pills">
+                        <button type="button" class="preset-pill" data-weight="250">250 g</button>
+                        <button type="button" class="preset-pill" data-weight="500">500 g</button>
+                        <button type="button" class="preset-pill active" data-weight="1000">1 kg</button>
+                        <button type="button" class="preset-pill" data-weight="2000">2 kg</button>
+                    </div>
+                </div>
+
                 <!-- Price Calculator -->
                 <div class="calculator-section">
-                    <h2 class="calculator-title">
-                        <i class="fas fa-calculator"></i> Price Calculator
-                    </h2>
-                    
+                    <div class="calculator-header">
+                        <h2 class="calculator-title">
+                            <i class="fas fa-balance-scale"></i> Custom Quantity Calculator
+                        </h2>
+                    </div>
+
                     <div class="input-group">
-                        <label for="weight-input">Enter how many grams you need:</label>
+                        <label for="weight-input">Need a custom amount? Enter weight in grams:</label>
                         <div class="weight-input-wrapper">
-                            <input type="number" id="weight-input" min="1" value="250" placeholder="250">
-                            <span class="weight-unit">g</span>
+                            <button type="button" class="qty-step-btn" id="qty-minus" aria-label="Decrease quantity"><i
+                                    class="fas fa-minus"></i></button>
+                            <input type="number" id="weight-input" min="0" step="1" value="1000"
+                                placeholder="e.g. 250">
+                            <span class="weight-unit">grams</span>
+                            <button type="button" class="qty-step-btn" id="qty-plus" aria-label="Increase quantity"><i
+                                    class="fas fa-plus"></i></button>
                         </div>
                     </div>
-                    
+
                     <div class="calculated-price">
-                        <span id="calculated-price-label">Price:</span>
+                        <span id="calculated-price-label">Estimated Price:</span>
                         <span id="calculated-price" class="price-value">₹0</span>
                     </div>
-                    
+
                     <button id="custom-add-btn" class="custom-add-btn">
-                        <i class="fas fa-shopping-bag"></i> Add Custom Amount to Cart
+                        <i class="fas fa-shopping-bag"></i> Add Selected Quantity to Cart
                     </button>
                 </div>
+
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <script src="/js/cart.js"></script>
     <script src="/js/product-detail.js"></script>
     <script src="/js/script.js"></script>
 </body>
+
 </html>

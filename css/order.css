@@ -112,11 +112,8 @@
     display: flex;
     align-items: center;
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
     padding: 16px 20px;
     gap: 16px;
-    transition: all 0.25s ease;
 }
 
 .checkout-item-card:hover {
