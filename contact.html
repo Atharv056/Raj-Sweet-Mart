@@ -43,6 +43,13 @@
                 <a href="order.html" class="nav-button">Order Now</a>
             </div>
 
+            <!-- Cart Button -->
+            <a href="order.html" class="nav-cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+                <span id="nav-cart-count" class="nav-cart-count">0</span>
+            </a>
+            
             <!-- Theme toggle button -->
             <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
                 <i class="fas fa-moon"></i>
@@ -361,7 +368,14 @@
         </footer>
 
         <script src="/js/script.js"></script>
+        <script src="/js/cart.js"></script>
         <script src="/js/contact.js"></script>
+        
+        <!-- Floating Cart Button -->
+        <a href="order.html" class="floating-cart-btn">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-item-count" class="cart-item-count">0</span>
+        </a>
 </body>
 
 </html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Set dark theme class before CSS loads to prevent white flash
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+                document.body.classList.add('dark-theme');
+            }
+        } catch (e) { }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - Raj Sweet Mart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/product-detail.css">
+</head>
+<body class="background-image">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; color: inherit;"><span class="logo-text">RAJ SWEET MART</span></a>
+            </div>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-button">Home</a>
+                <a href="menu.html" class="nav-button">Menu</a>
+                <a href="diwali.html" class="nav-button">Diwali-Special</a>
+                <a href="contact.html" class="nav-button">Contact</a>
+                <a href="order.html" class="nav-button">Order Now</a>
+            </div>
+
+            <div class="nav-right-container">
+                <a href="order.html" class="nav-cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span id="nav-cart-count" class="nav-cart-count">0</span>
+                </a>
+                
+                <!-- Theme toggle button -->
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span id="menu-icon">☰</span>
+            </button>
+        </div>
+            </div>
+        </div>
+
+        <div class="mobile-nav" id="mobile-nav">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="menu.html" class="mobile-nav-link">Menu</a>
+            <a href="diwali.html" class="mobile-nav-link">Diwali-Special</a>
+            <a href="contact.html" class="mobile-nav-link">Contact</a>
+            <a href="order.html" class="mobile-nav-link">Order Now</a>
+        </div>
+
+        <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+    </nav>
+
+    <div class="page-container">
+        <div class="product-detail-container">
+            <div class="product-image-section">
+                <img id="product-img" src="" alt="Product Image">
+            </div>
+            
+            <div class="product-info-section">
+                <h1 id="product-name" class="product-name"></h1>
+                <p id="product-price" class="product-price"></p>
+                
+                <!-- Quick Add 1kg Button -->
+                <button id="quick-add-btn" class="quick-add-btn">
+                    <i class="fas fa-cart-plus"></i> Add to Cart - 1kg
+                </button>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <!-- Price Calculator -->
+                <div class="calculator-section">
+                    <h2 class="calculator-title">
+                        <i class="fas fa-calculator"></i> Price Calculator
+                    </h2>
+                    
+                    <div class="input-group">
+                        <label for="weight-input">Enter how many grams you need:</label>
+                        <div class="weight-input-wrapper">
+                            <input type="number" id="weight-input" min="1" value="250" placeholder="250">
+                            <span class="weight-unit">g</span>
+                        </div>
+                    </div>
+                    
+                    <div class="calculated-price">
+                        <span id="calculated-price-label">Price:</span>
+                        <span id="calculated-price" class="price-value">₹0</span>
+                    </div>
+                    
+                    <button id="custom-add-btn" class="custom-add-btn">
+                        <i class="fas fa-shopping-bag"></i> Add Custom Amount to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/cart.js"></script>
+    <script src="/js/product-detail.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>

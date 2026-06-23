@@ -41,6 +41,7 @@
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -93,6 +94,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -346,7 +348,7 @@
     transition: all 0.2s ease;
 }
 
-.float-field textarea + label {
+.float-field textarea+label {
     top: 24px;
     transform: none;
 }
@@ -362,7 +364,7 @@
     transition: color 0.2s ease;
 }
 
-.float-field textarea ~ .input-icon {
+.float-field textarea~.input-icon {
     top: 24px;
     transform: none;
 }
@@ -373,15 +375,15 @@
     box-shadow: 0 0 0 4px rgba(255, 140, 43, 0.15);
 }
 
-.float-field input:focus ~ .input-icon,
-.float-field textarea:focus ~ .input-icon {
+.float-field input:focus~.input-icon,
+.float-field textarea:focus~.input-icon {
     color: #ff8c2b;
 }
 
-.float-field input:not(:placeholder-shown) + label,
-.float-field textarea:not(:placeholder-shown) + label,
-.float-field input:focus + label,
-.float-field textarea:focus + label {
+.float-field input:not(:placeholder-shown)+label,
+.float-field textarea:not(:placeholder-shown)+label,
+.float-field input:focus+label,
+.float-field textarea:focus+label {
     top: -8px;
     left: 12px;
     transform: none;
@@ -474,9 +476,11 @@
     0% {
         top: 5%;
     }
+
     50% {
         top: 95%;
     }
+
     100% {
         top: 5%;
     }
@@ -552,8 +556,13 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* Responsive */
@@ -561,6 +570,7 @@
     .checkout-layout {
         grid-template-columns: 1fr;
     }
+
     .sticky-sidebar {
         position: static;
     }
@@ -571,43 +581,43 @@
         margin: 20px auto;
         padding: 0 16px;
     }
-    
+
     .checkout-header h1 {
         font-size: 2.2rem;
     }
-    
+
     .checkout-card {
         padding: 20px;
     }
-    
+
     .form-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .form-grid .full-width {
         grid-column: span 1;
     }
-    
+
     .checkout-item-card {
         padding: 12px 14px;
         gap: 12px;
     }
-    
+
     .item-icon {
         width: 40px;
         height: 40px;
         font-size: 1.2rem;
     }
-    
+
     .item-name {
         font-size: 1rem;
     }
-    
+
     .qty-btn {
         width: 28px;
         height: 28px;
     }
-    
+
     .remove-item-btn {
         width: 32px;
         height: 32px;
@@ -718,10 +728,10 @@
     box-shadow: 0 0 0 4px rgba(255, 140, 43, 0.2);
 }
 
-.dark-theme .float-field input:not(:placeholder-shown) + label,
-.dark-theme .float-field textarea:not(:placeholder-shown) + label,
-.dark-theme .float-field input:focus + label,
-.dark-theme .float-field textarea:focus + label {
+.dark-theme .float-field input:not(:placeholder-shown)+label,
+.dark-theme .float-field textarea:not(:placeholder-shown)+label,
+.dark-theme .float-field input:focus+label,
+.dark-theme .float-field textarea:focus+label {
     background: #18181b;
 }
 

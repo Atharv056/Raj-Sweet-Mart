@@ -29,10 +29,9 @@ Firebase Realtime Database allows all orders to be stored in a shared cloud data
 
 1. In Firebase Console, go to **Project Settings** (gear icon ⚙️ top left)
 2. Click **"Your apps"** section
-3. Click **"</>‎ Web"** icon to add a web app
-4. App nickname: `Raj Sweet Mart Web`
-5. Click **Register app**
-6. Copy the config object that appears - it looks like this:
+3. App nickname: `Raj Sweet Mart Web`
+4. Click **Register app**
+5. Copy the config object that appears - it looks like this:
 
 ```javascript
 const firebaseConfig = {

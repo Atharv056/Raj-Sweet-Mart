@@ -1,6 +1,6 @@
 // Cart management utility
 // Stores cart in localStorage under "rsm_cart"
-// Each item: { id, name, price, qty }
+// Each item: { id, name, price, qty, weight, pricePerUnit, unit }
 
 // Get cart from localStorage
 function getCart() {
@@ -15,6 +15,7 @@ function getCart() {
 // Save cart to localStorage
 function saveCart(cart) {
     localStorage.setItem('rsm_cart', JSON.stringify(cart));
+    updateCartCount();
 }
 
 // Find item index by id
@@ -29,7 +30,15 @@ function addToCart(item) {
     if (idx >= 0) {
         cart[idx].qty += 1;
     } else {
-        cart.push({ id: item.id, name: item.name, price: item.price, qty: 1 });
+        cart.push({ 
+            id: item.id, 
+            name: item.name, 
+            price: item.price, 
+            qty: item.qty || 1,
+            weight: item.weight || 1000, // Default 1kg
+            pricePerUnit: item.pricePerUnit || item.price,
+            unit: item.unit || 'kg'
+        });
     }
     saveCart(cart);
 }
@@ -57,7 +66,31 @@ function clearCart() {
 
 // Calculate total
 function cartTotal() {
-    return getCart().reduce((sum, i) => sum + i.price * i.qty, 0);
+    return getCart().reduce((sum, i) => sum + (i.price || (i.pricePerUnit * (i.weight / 1000))) * i.qty, 0);
+}
+
+// Get total number of items in cart
+function cartItemCount() {
+    return getCart().reduce((sum, i) => sum + i.qty, 0);
+}
+
+// Update cart count display
+function updateCartCount() {
+    // Update floating cart count
+    const floatingCountElement = document.getElementById('cart-item-count');
+    if (floatingCountElement) {
+        const count = cartItemCount();
+        floatingCountElement.textContent = count;
+        floatingCountElement.style.display = count > 0 ? 'flex' : 'none';
+    }
+    
+    // Update navbar cart count
+    const navCountElement = document.getElementById('nav-cart-count');
+    if (navCountElement) {
+        const count = cartItemCount();
+        navCountElement.textContent = count;
+        navCountElement.style.display = count > 0 ? 'flex' : 'none';
+    }
 }
 
 // Helper: parse numeric price from strings like "₹400/kg"
@@ -66,59 +99,46 @@ function parsePrice(text) {
     return m ? parseFloat(m[1]) : 0;
 }
 
-// UI enhancer: attach Add to Cart buttons on menu items
+// Helper: parse unit from strings like "₹400/kg"
+function parseUnit(text) {
+    const t = String(text || '').toLowerCase();
+    if (t.includes('/kg')) return 'kg';
+    if (t.includes('/g')) return 'g';
+    if (t.includes('/piece')) return 'piece';
+    if (t.includes('/pic')) return 'piece';
+    if (t.includes('/liter')) return 'liter';
+    if (t.includes('/l')) return 'liter';
+    return 'unit';
+}
+
+// UI enhancer: make items clickable to open product detail page
 document.addEventListener('DOMContentLoaded', function () {
+    // Update cart count on load
+    updateCartCount();
+    
     const items = document.querySelectorAll('.sweet-item');
     items.forEach((el) => {
         const name = el.dataset.name || el.querySelector('.sweet-name')?.textContent?.trim() || 'Item';
         const priceText = el.dataset.price || el.querySelector('.sweet-price')?.textContent?.trim() || '';
         const price = parsePrice(priceText);
-        const id = (name + '_' + price).toLowerCase().replace(/\s+/g, '-');
+        const unit = parseUnit(priceText);
+        
+        // Get image src
+        let imgSrc = '';
+        const imgEl = el.querySelector('.sweet-photo');
+        if (imgEl) imgSrc = imgEl.src;
 
-        // Avoid duplicate buttons
-        if (el.querySelector('.add-to-cart-btn')) return;
-
-        const details = el.querySelector('.sweet-details') || el;
-        const btn = document.createElement('button');
-        // Add Tailwind-like utility classes for future compatibility and semantic clarity
-        btn.className = 'add-to-cart-btn px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300';
-        btn.textContent = 'Add to Cart';
-        btn.style.marginTop = '8px';
-        btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            
-            // Trigger pulse animation
-            btn.classList.add('pulse');
-            
-            // Add success glow animation
-            setTimeout(() => {
-                btn.classList.add('success');
-            }, 100);
-            
-            // Show cart notification
-            const notification = document.createElement('div');
-            notification.className = 'cart-notification';
-            notification.innerHTML = `<i class="fas fa-check-circle" style="margin-right: 8px;"></i>${name} added to cart!`;
-            document.body.appendChild(notification);
-            
-            // Remove notification after animation completes
-            setTimeout(() => {
-                notification.remove();
-            }, 1000);
-            
-            // Add item to cart
-            addToCart({ id, name, price });
-            
-            // Update button text and back to original
-            const originalText = btn.textContent;
-            btn.textContent = '✓ Added!';
-            
-            // Reset button styles and text
-            setTimeout(() => {
-                btn.classList.remove('pulse', 'success');
-                btn.textContent = originalText;
-            }, 1500);
+        // Make item clickable to open product detail page
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', (e) => {
+            const params = new URLSearchParams({
+                name,
+                priceText,
+                price,
+                unit,
+                imgSrc
+            });
+            window.location.href = 'product-detail.html?' + params.toString();
         });
-        details.appendChild(btn);
     });
 });
