@@ -133,13 +133,17 @@
                     </div>
 
                     <div class="input-group">
-                        <label for="weight-input">Need a custom amount? Enter weight in grams:</label>
+                        <label for="weight-input" id="weight-input-label">Need a custom amount? Enter weight:</label>
                         <div class="weight-input-wrapper">
                             <button type="button" class="qty-step-btn" id="qty-minus" aria-label="Decrease quantity"><i
                                     class="fas fa-minus"></i></button>
-                            <input type="number" id="weight-input" min="0" step="1" value="1000"
-                                placeholder="e.g. 250">
-                            <span class="weight-unit">grams</span>
+                            <input type="number" id="weight-input" min="0" step="50" value="1000" placeholder="e.g. 250">
+                            <div class="weight-unit-select-wrapper">
+                                <select id="weight-unit-select" class="weight-unit-select">
+                                    <option value="g" selected>Gram</option>
+                                    <option value="kg">kg</option>
+                                </select>
+                            </div>
                             <button type="button" class="qty-step-btn" id="qty-plus" aria-label="Increase quantity"><i
                                     class="fas fa-plus"></i></button>
                         </div>
