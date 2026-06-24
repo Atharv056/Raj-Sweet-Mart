@@ -601,13 +601,12 @@
     }
 
     .item-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
+        display: none;
     }
 
     .item-name {
         font-size: 1rem;
+        white-space: nowrap;
     }
 
     .qty-btn {

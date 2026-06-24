@@ -66,12 +66,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const rows = cart.map(i => `
         <div class="checkout-item-card">
           <div class="item-icon">
-             <i class="fas fa-cookie"></i>
+            <i class="fas fa-cookie"></i>
           </div>
           <div class="item-details">
             <h4 class="item-name">${i.name}</h4>
             <div class="item-price-info">
-              <span class="unit-price">₹${Math.round(i.price)} / unit</span>
               <span class="item-total-price">₹${(i.price * i.qty).toFixed(2)}</span>
             </div>
           </div>
@@ -217,4 +216,3 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
-
