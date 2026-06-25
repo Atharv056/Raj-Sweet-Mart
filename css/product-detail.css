@@ -351,6 +351,8 @@ body.dark-theme .badge-ghee {
     align-items: center;
     justify-content: center;
     transition: background 0.2s, color 0.2s;
+    margin-right: 20px;
+    margin-left: 20px;
 }
 
 .qty-step-btn:hover {
@@ -744,6 +746,7 @@ body.dark-theme .custom-toast {
         width: 36px;
         height: 36px;
         flex-shrink: 0;
+        margin-left: 10px;
     }
 
     .weight-unit-select-wrapper {
