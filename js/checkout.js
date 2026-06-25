@@ -53,6 +53,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function renderCart() {
     const cart = getCart();
+    console.log('Debug: Cart contents:', cart);
+    console.log('Debug: cart.length', cart.length);
     if (cart.length === 0) {
       cartEl.innerHTML = `
         <div class="empty-cart-view">

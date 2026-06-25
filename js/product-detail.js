@@ -187,6 +187,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formattedWeightText = grams >= 1000 ? (grams / 1000) + 'kg' : grams + 'g';
 
+        console.log('Debug: Adding item to cart:', {
+            id,
+            name: name + ' (' + formattedWeightText + ')',
+            price: calculatedPrice,
+            pricePerUnit: price,
+            unit,
+            weight: grams,
+            qty: 1
+        });
         if (typeof addToCart === 'function') {
             addToCart({
                 id,
@@ -197,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 weight: grams,
                 qty: 1
             });
+            console.log('Debug: Cart after add:', getCart());
         }
 
         // Trigger premium notification toast

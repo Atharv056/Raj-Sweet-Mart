@@ -81,20 +81,22 @@
                 }
             </style>
 
-            <!-- Cart Button -->
-            <a href="order.html" class="nav-cart-btn">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Cart</span>
-                <span id="nav-cart-count" class="nav-cart-count">0</span>
-            </a>
-            
-            <!-- Theme toggle button -->
-            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
-                <i class="fas fa-moon"></i>
-            </button>
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                <span id="menu-icon">☰</span>
-            </button>
+            <div class="nav-right-container">
+                <!-- Cart Button -->
+                <a href="order.html" class="nav-cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span id="nav-cart-count" class="nav-cart-count">0</span>
+                </a>
+                
+                <!-- Theme toggle button -->
+                <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" type="button">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <span id="menu-icon">☰</span>
+                </button>
+            </div>
         </div>
         <div class="mobile-nav" id="mobile-nav">
             <a href="index.html" class="mobile-nav-link">Home</a>
@@ -145,6 +147,12 @@
         </div>
         <div class="overlay"></div>
     </div>
+
+    <!-- Floating Cart Button -->
+    <a href="order.html" class="floating-cart-btn">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cart-item-count" class="cart-item-count">0</span>
+    </a>
 
     <script src="/js/script.js"></script>
     <script src="/js/cart.js"></script>
