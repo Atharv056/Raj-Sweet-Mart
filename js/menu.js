@@ -1,41 +1,9 @@
 // Menu-specific JavaScript
 document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('itemModal');
-    const modalClose = document.getElementById('modalClose');
     const sweetItems = document.querySelectorAll('.sweet-item');
     const categoryButtons = document.querySelectorAll('.category-btn');
     const searchInput = document.getElementById('navSearchInput');
     const mobileSearchInput = document.getElementById('menuSearchInput');
-
-    // Function to open the modal
-    const openModal = (e) => {
-        // Find the clicked sweet-item
-        const item = e.currentTarget;
-        
-        // Get data from attributes
-        const name = item.dataset.name;
-        const description = item.dataset.description;
-        const price = item.dataset.price;
-        const ingredients = item.dataset.ingredients;
-        const weights = item.dataset.weights;
-        const category = item.dataset.category;
-
-// Populate modal
-document.getElementById('modalCategory').textContent = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Sweets';
-document.getElementById('modalName').textContent = name;
-document.getElementById('modalDescription').textContent = description;
-document.getElementById('modalPrice').innerHTML = `<strong>Price:</strong> ${price}`;
-document.getElementById('modalIngredients').innerHTML = `<strong>Ingredients:</strong> ${ingredients}`;
-document.getElementById('modalWeights').innerHTML = `<strong>Available Weights:</strong> ${weights}`;;
-        
-        // Show modal
-        modal.style.display = 'flex';
-    };
-
-    // Function to close the modal
-    const closeModal = () => {
-        modal.style.display = 'none';
-    };
 
     // CATEGORY FILTERING FUNCTIONALITY
     const filterCategory = (category) => {
@@ -159,30 +127,6 @@ document.getElementById('modalWeights').innerHTML = `<strong>Available Weights:<
             performSearch(searchInput.value);
         });
     }
-
-    // Add click listeners to all sweet items
-    sweetItems.forEach(item => {
-        item.addEventListener('click', openModal);
-    });
-
-    // Add click listener for the close button
-    if (modalClose) {
-        modalClose.addEventListener('click', closeModal);
-    }
-
-    // Add click listener for the modal background to close it
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-
-    // Close modal with Escape key
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display === 'flex') {
-            closeModal();
-        }
-    });
 
     // Initialize with all items visible
     filterCategory('all');

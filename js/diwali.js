@@ -1,75 +1,9 @@
 // diwali-specific JavaScript
 document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('itemModal');
-    const modalClose = document.getElementById('modalClose');
     const sweetItems = document.querySelectorAll('.sweet-item');
     const searchInput = document.getElementById('navSearchInput');
     const mobileSearchInput = document.getElementById('menuSearchInput');
     const diwaliSearchInput = document.getElementById('diwaliSearchInput');
-
-    // Function to open the modal
-    const openModal = (e) => {
-        // Find the clicked sweet-item
-        const item = e.currentTarget;
-        
-        // Get data from attributes
-        const name = item.dataset.name;
-        const description = item.dataset.description;
-        const price = item.dataset.price;
-        //const ingredients = item.dataset.ingredients;
-        const weights = item.dataset.weights;
-        const category = item.dataset.category;
-
-// Populate modal
-document.getElementById('modalCategory').textContent = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Sweets';
-document.getElementById('modalName').textContent = name;
-document.getElementById('modalDescription').textContent = description;
-document.getElementById('modalPrice').innerHTML = `<strong>Price:</strong> ${price}`;
-//document.getElementById('modalIngredients').innerHTML = `<strong>Ingredients:</strong> ${ingredients}`;
-document.getElementById('modalWeights').innerHTML = `<strong>Available Weights:</strong> ${weights}`;;
-        
-        // Show modal
-        modal.style.display = 'flex';
-    };
-
-    // Function to close the modal
-    const closeModal = () => {
-        modal.style.display = 'none';
-    };
-
-    // CATEGORY FILTERING FUNCTIONALITY
-    const filterCategory = (category) => {
-        // Update active button
-        categoryButtons.forEach(btn => {
-            btn.classList.remove('active');
-        });
-        event.target.classList.add('active');
-
-        // Filter items with smooth animations
-        sweetItems.forEach((item, index) => {
-            const itemCategory = item.dataset.category;
-            
-            if (category === 'all' || itemCategory === category) {
-                // Show item with staggered animation
-                setTimeout(() => {
-                    item.style.display = '';
-                    item.classList.remove('hidden');
-                    item.classList.add('visible');
-                }, index * 50); // Stagger the animations
-            } else {
-                // Hide item with animation
-                item.classList.remove('visible');
-                item.classList.add('hidden');
-                setTimeout(() => {
-                    item.style.display = 'none';
-                }, 300);
-            }
-        });
-
-    };
-
-    // Make filterCategory function globally available
-    window.filterCategory = filterCategory;
 
     // SEARCH FUNCTIONALITY
     let currentSearchTerm = '';
