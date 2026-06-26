@@ -780,7 +780,7 @@ body.dark-theme .custom-toast {
 
 @media (max-width: 480px) {
     .breadcrumb-nav {
-        margin: 10px auto;
+        margin: 25px auto;
         padding: 0 12px;
     }
 

@@ -50,9 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = (item.dataset.name || '').toLowerCase();
             const description = (item.dataset.description || '').toLowerCase();
             
-            // Check if item name or description starts with the search term
-            const nameMatch = name.startsWith(searchTerm);
-            const descMatch = description.startsWith(searchTerm);
+            // Check if item name or description includes the search term
+            const nameMatch = name.includes(searchTerm);
+            const descMatch = description.includes(searchTerm);
             
             if (searchTerm === '' || nameMatch || descMatch) {
                 item.style.display = '';

@@ -1,9 +1,46 @@
 // diwali-specific JavaScript
 document.addEventListener('DOMContentLoaded', () => {
     const sweetItems = document.querySelectorAll('.sweet-item');
+    const categoryButtons = document.querySelectorAll('.category-btn');
     const searchInput = document.getElementById('navSearchInput');
     const mobileSearchInput = document.getElementById('menuSearchInput');
     const diwaliSearchInput = document.getElementById('diwaliSearchInput');
+
+    // CATEGORY FILTERING FUNCTIONALITY
+    const filterCategory = (category) => {
+        // Update active button
+        categoryButtons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+
+        // Filter items with smooth animations
+        sweetItems.forEach((item, index) => {
+            const itemCategory = item.dataset.category;
+            
+            if (category === 'all' || itemCategory === category) {
+                // Show item with staggered animation
+                setTimeout(() => {
+                    item.style.display = '';
+                    item.classList.remove('hidden');
+                    item.classList.add('visible');
+                }, index * 50); // Stagger the animations
+            } else {
+                // Hide item with animation
+                item.classList.remove('visible');
+                item.classList.add('hidden');
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }
+        });
+
+    };
+
+    // Make filterCategory function globally available
+    window.filterCategory = filterCategory;
 
     // SEARCH FUNCTIONALITY
     let currentSearchTerm = '';
@@ -13,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = query.toLowerCase().trim();
         
         sweetItems.forEach(item => {
-            const name = item.dataset.name.toLowerCase();
+            const name = (item.dataset.name || '').toLowerCase();
             const description = (item.dataset.description || '').toLowerCase();
             const matches = name.includes(searchTerm) || 
                           description.includes(searchTerm) || 
@@ -141,13 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove active class from all buttons
         categoryButtons.forEach(btn => btn.classList.remove('active'));
         // Add active class to clicked button
-        event.target.classList.add('active');
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
 
-        const targetCategory = category.toLowerCase();
+        const targetCategory = (category || '').toLowerCase();
 
         requestAnimationFrame(() => {
             sweetItems.forEach(item => {
-                const itemCategory = item.dataset.category.toLowerCase();
+                const itemCategory = (item.dataset.category || '').toLowerCase();
                 const shouldShow = category === 'all' || itemCategory === targetCategory;
                 
                 item.style.display = shouldShow ? '' : 'none';
